@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202411071733636.jpg">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202411071745746.png">
 <meta property="article:published_time" content="2024-11-07T09:00:41.000Z">
-<meta property="article:modified_time" content="2024-11-07T10:40:32.642Z">
+<meta property="article:modified_time" content="2024-11-07T12:46:25.643Z">
 <meta property="article:author" content="allenig">
 <meta property="article:tag" content="数通">
 <meta property="article:tag" content="期末">
@@ -316,8 +316,18 @@
 <h3 id="4、单工、半双工和全双工"><a href="#4、单工、半双工和全双工" class="headerlink" title="4、单工、半双工和全双工"></a>4、单工、半双工和全双工</h3><p>按照数据信号在信道上的传送方向与时间的关系，传输方式可分为三类：</p>
 <p>1）单工：指两个站之间只能沿一个指定的方向传送数据信号。<br>2）半双工：指两个站之间可以在两个方向上传送数据信号，但不能同时进行。又称“双向交替”模式。发&#x2F;收之间的转向时间为20～50ms。<br>3）全双工：指两个站之间可以在两个方向上同时传送数据信号。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202411071833041.png" alt="image-20241107183327997"></p>
-<h2 id="传输速率"><a href="#传输速率" class="headerlink" title="传输速率"></a>传输速率</h2><p>传输速率    指单位时间内传送的信息量，是衡量数据通信系统传输能力的一个重要指标。常用的传输速率有两种：<br>1）<strong>调制速率</strong>(或波特率、码元速率)<br>    指单位时间内调制信号波形的变换次数。其单位是波特。<br>    $R_B&#x3D;1&#x2F;T(s)$ (Baud)<br>2）<strong>数据信号速率</strong>(或传信率、比特率)<br>    指单位时间内通过信道的信息量。其单位是比特&#x2F;秒。<br>    $R_b&#x3D;\sum_{i&#x3D;1}^{n} 1&#x2F;T_ilbM_i$ (b&#x2F;s)</p>
+<h2 id="传输速率"><a href="#传输速率" class="headerlink" title="传输速率"></a>传输速率</h2><p>传输速率    指单位时间内传送的信息量，是衡量数据通信系统传输能力的一个重要指标。常用的传输速率有两种：<br>1）<strong>调制速率</strong>(或波特率、码元速率)<br>    指单位时间内调制信号波形的变换次数。其单位是波特。<br>    $R_B&#x3D;1&#x2F;T(s)$ (Baud)<br>2）<strong>数据信号速率</strong>(或传信率、比特率)<br>    指单位时间内通过信道的信息量。其单位是比特&#x2F;秒。<br>    $R_b &#x3D; \sum_{i&#x3D;1}^{n} \frac{1}{T_i} \log_2 M_i$ (b&#x2F;s)</p>
+<p>$M$表示每个码元的状态数或不同符号数（即调制的进制数）。例如，2态调制表示 $M&#x3D;2$（每个码元代表1比特），而4态调制表示 $M&#x3D;4$（每个码元代表2比特）。</p>
 <p>调制速率与数据信号速率的关系：<br>$$R_b&#x3D;R_Blog_{2}{M}$$</p>
+<blockquote>
+<p>例题：若采用8路并行传输和二进制调制，每路调制信号波的最短持续时间$T_i&#x3D;0.013s$，试求数据信号速率$R_b$和调制信号$R_B$。</p>
+</blockquote>
+<p>解：</p>
+<blockquote>
+<p>$R_b&#x3D; &#x3D; \sum_{i&#x3D;1}^{8} \frac{1}{T_i} \log_2 2&#x3D;75\times1\times8&#x3D;600(b&#x2F;s)$</p>
+<p>$R_B&#x3D;\frac{1}{T_i}&#x3D;\frac{1}{0.013}&#x3D;75(Baud)$</p>
+</blockquote>
+<p>如果按照$R_B和R_b$ 的关系也可以求出$R_b$，但因为是并行传输，所以记得乘以8，如果是串行的话就不需要累加了。</p>
 <h2 id="传输损伤"><a href="#传输损伤" class="headerlink" title="传输损伤"></a>传输损伤</h2><p>数据信号在数据通信系统的端到端连接的每个环节都可能受到伤害，ITU称之为传输损伤。<br>并推荐用<strong>误码、抖动、漂移、滑动、时延</strong>来表示。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202411071833719.png" alt="image-20241107183318660"></p>
 <h2 id="传输质量"><a href="#传输质量" class="headerlink" title="传输质量"></a>传输质量</h2><p>1）衰减与增益<br>    衰减：当信号沿传输媒体传播时，其部分能量转换成热能或被传输媒体所吸收，而导致信号强度不断减弱的现象。</p>
