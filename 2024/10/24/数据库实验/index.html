@@ -20,10 +20,8 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202411071600962.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202411071600122.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202411071600662.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202410251721435.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202410251723851.png">
 <meta property="article:published_time" content="2024-10-24T14:39:46.000Z">
-<meta property="article:modified_time" content="2024-11-07T08:01:11.344Z">
+<meta property="article:modified_time" content="2024-11-07T08:04:17.269Z">
 <meta property="article:author" content="allenig">
 <meta property="article:tag" content="实验">
 <meta property="article:tag" content="数据库">
@@ -426,10 +424,7 @@
 </li>
 <li><p>最终，我们根据 <code>C1.Cno = &#39;5&#39;</code> 的条件，查询编号为 <code>5</code> 的课程的前置课程，并通过 <code>JOIN</code> 得到前置课程的名称。</p>
 <p>用where语句：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> C2.Cname <span class="keyword">AS</span> PrePreCourse</span><br><span class="line"><span class="keyword">FROM</span> Course C1, Course C2</span><br><span class="line"><span class="keyword">WHERE</span> C1.Cpno <span class="operator">=</span> C2.Cno</span><br><span class="line">  <span class="keyword">AND</span> C1.Cno <span class="operator">=</span> <span class="string">&#x27;5&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202410251721435.png" alt="{2831229C-D56E-4AB2-8C98-19AE38633DCC}"></p>
-</li>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> C2.Cname <span class="keyword">AS</span> PrePreCourse</span><br><span class="line"><span class="keyword">FROM</span> Course C1, Course C2</span><br><span class="line"><span class="keyword">WHERE</span> C1.Cpno <span class="operator">=</span> C2.Cno</span><br><span class="line">  <span class="keyword">AND</span> C1.Cno <span class="operator">=</span> <span class="string">&#x27;5&#x27;</span>;</span><br></pre></td></tr></table></figure></li>
 </ul>
 <h2 id="题目18"><a href="#题目18" class="headerlink" title="题目18"></a>题目18</h2><p>18 查询同时选修《数据库》和《数据结构》两门课程的学生姓名</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sname </span><br><span class="line"><span class="keyword">FROM</span> SC <span class="keyword">AS</span> SC1</span><br><span class="line"><span class="keyword">JOIN</span> SC <span class="keyword">AS</span> SC2 <span class="keyword">ON</span> SC1.Sno <span class="operator">=</span> SC2.Sno</span><br><span class="line"><span class="keyword">JOIN</span> Student  <span class="keyword">ON</span> SC1.Sno <span class="operator">=</span> Student.Sno</span><br><span class="line"><span class="keyword">WHERE</span> SC1.Cno <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span> <span class="keyword">AND</span> SC2.Cno <span class="operator">=</span> <span class="string">&#x27;5&#x27;</span>;</span><br></pre></td></tr></table></figure>
@@ -461,8 +456,7 @@
 <li>从 <code>C1</code> 表中的 <code>Cpno</code> 列（通常表示课程的先修课程编号）与 <code>C2</code> 表中的 <code>Cno</code> 列（表示课程编号）进行比较。</li>
 </ul>
 </li>
-<li>只有当 <code>C1.Cpno</code> 的值与 <code>C2.Cno</code> 的值相等时，才会将这两个表中的记录组合在一起。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> PrerequisiteCourses;</span><br></pre></td></tr></table></figure>
-<img src="https://cdn.jsdelivr.net/gh/totogo7/totogo7.github.io/img/202410251723851.png" alt="{3361F476-B1C4-4BFE-A918-05B5734E5112}"></li>
+<li>只有当 <code>C1.Cpno</code> 的值与 <code>C2.Cno</code> 的值相等时，才会将这两个表中的记录组合在一起。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> PrerequisiteCourses;</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 </ul>
