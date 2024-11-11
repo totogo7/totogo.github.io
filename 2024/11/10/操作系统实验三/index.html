@@ -14,7 +14,7 @@
 <meta property="og:description" content="实验三：存储器管理一、实验目的本次实验旨在通过使用操作系统内存分配信息的动态观察以及存储器管理算法的实现，加深对内存分配原理的理解（重点加深对请求式分页存储管理方式的理解）。同时通过相关算法的实现，熟悉页面置换算法及其性能。 二、实验内容 使用 taskmgr.exe 观察实验环境中的进程生命周期内系统内存分配变化情况； 编程实现请求分页管理方式时的地址变换过程； 编程实现 OPT 或者 FIFO">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-11-10T14:56:45.000Z">
-<meta property="article:modified_time" content="2024-11-10T14:59:26.742Z">
+<meta property="article:modified_time" content="2024-11-10T15:00:51.011Z">
 <meta property="article:author" content="allenig">
 <meta property="article:tag" content="实验">
 <meta property="article:tag" content="操作系统">
@@ -243,11 +243,16 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (s.<span class="built_in">size</span>() == capacity) &#123;</span><br><span class="line">    <span class="comment">// 内存已满，找到未来最晚访问的页面并替换</span></span><br><span class="line">    <span class="type">int</span> farthest = <span class="number">-1</span>, indexToReplace = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; s.<span class="built_in">size</span>(); j++) &#123;</span><br><span class="line">        <span class="type">int</span> nextUse = n;  <span class="comment">// 假设页面不会再被访问</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> k = i + <span class="number">1</span>; k &lt; n; k++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] == pages[k]) &#123;</span><br><span class="line">                nextUse = k;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (nextUse &gt; farthest) &#123;</span><br><span class="line">            farthest = nextUse;</span><br><span class="line">            indexToReplace = j;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    s[indexToReplace] = pages[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>解释：</p>
 <ol>
-<li>首先检查内存是否已满，只有在内存已满的情况下才会进行替换。</li>
-<li>然后，通过遍历内存中的每个页面，找出它们在未来的访问序列中最后一次被访问的时间。</li>
-<li>比较所有页面的最后访问时间，选择最晚被访问的页面进行替换。</li>
-<li>最后，替换掉最晚访问的页面，并把当前页面加载到内存中。<br>详细：</li>
+<li><p>首先检查内存是否已满，只有在内存已满的情况下才会进行替换。</p>
+</li>
+<li><p>然后，通过遍历内存中的每个页面，找出它们在未来的访问序列中最后一次被访问的时间。</p>
+</li>
+<li><p>比较所有页面的最后访问时间，选择最晚被访问的页面进行替换。</p>
+</li>
+<li><p>最后，替换掉最晚访问的页面，并把当前页面加载到内存中。</p>
+</li>
 </ol>
+<p>详细：</p>
 <ul>
 <li><code>farthest</code> 用来记录未来最晚被访问的页面的访问时间索引。初始值设为 -1，因为我们假设没有页面被访问（较大的访问时间）。</li>
 <li><code>indexToReplace</code> 用来记录最晚被访问页面的索引。我们用它来确定替换哪个页面。</li>
