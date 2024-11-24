@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="实验四：文件管理一、实验目的本次实验旨在通过实践了解文件管理原理与方法，重点加深对外存分配方式和文件空闲存储空间的理解。 二、实验内容 了解使用计算机系统的文件系统的格式；  编程实现连续分配、链接分配、索引分配等三种外存分配方式；  编程实现空闲表法、位示图法连续分配、成组链接法等三种文件存储空间   管理方式 三、实验组织运行要求根据本实验的特点、要求和具体条件，宜采用“以学生自主训练为主的开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统实验四">
+<meta property="og:url" content="https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/index.html">
+<meta property="og:site_name" content="allenig&#39;s blog">
+<meta property="og:description" content="实验四：文件管理一、实验目的本次实验旨在通过实践了解文件管理原理与方法，重点加深对外存分配方式和文件空闲存储空间的理解。 二、实验内容 了解使用计算机系统的文件系统的格式；  编程实现连续分配、链接分配、索引分配等三种外存分配方式；  编程实现空闲表法、位示图法连续分配、成组链接法等三种文件存储空间   管理方式 三、实验组织运行要求根据本实验的特点、要求和具体条件，宜采用“以学生自主训练为主的开">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-11-24T10:28:50.000Z">
+<meta property="article:modified_time" content="2024-11-24T10:45:47.103Z">
+<meta property="article:author" content="allenig">
+<meta property="article:tag" content="实验">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/psc.jpg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/psc.jpg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/psc.jpg">
+        
+      
+    
+    <!-- title -->
+    <title>操作系统实验四</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/totogo7">Projects</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://hammerhead-hippodraco-08a.notion.site/Impractical_Idealism-2688453a68724aefb598dd9a8beb8408">movie&amp;reading</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/11/10/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E4%B8%89/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&text=操作系统实验四"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&is_video=false&description=操作系统实验四"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=操作系统实验四&body=Check out this article: https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&name=操作系统实验四&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&t=操作系统实验四"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%9B%EF%BC%9A%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">实验四：文件管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="toc-number">1.0.1.</span> <span class="toc-text">一、实验目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="toc-number">1.0.2.</span> <span class="toc-text">二、实验内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E7%BB%84%E7%BB%87%E8%BF%90%E8%A1%8C%E8%A6%81%E6%B1%82"><span class="toc-number">1.0.3.</span> <span class="toc-text">三、实验组织运行要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.0.4.</span> <span class="toc-text">四、思考题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a-%E8%BF%9E%E7%BB%AD%E5%88%86%E9%85%8D%E4%B8%8E%E9%93%BE%E6%8E%A5%E5%88%86%E9%85%8D"><span class="toc-number">1.1.</span> <span class="toc-text">a) 连续分配与链接分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#b-%E7%B4%A2%E5%BC%95%E5%88%86%E9%85%8D"><span class="toc-number">1.2.</span> <span class="toc-text">b) 索引分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#c-%E7%A9%BA%E9%97%B2%E8%A1%A8%E6%B3%95%E4%B8%8E%E4%BD%8D%E7%A4%BA%E5%9B%BE%E6%B3%95%E8%BF%9E%E7%BB%AD%E5%88%86%E9%85%8D"><span class="toc-number">1.3.</span> <span class="toc-text">c) 空闲表法与位示图法连续分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#d-%E6%88%90%E7%BB%84%E9%93%BE%E6%8E%A5%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">d) 成组链接法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.5.</span> <span class="toc-text">思考题</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        操作系统实验四
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">allenig</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-11-24T10:28:50.000Z" class="dt-published" itemprop="datePublished">2024-11-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AE%9E%E9%AA%8C/" rel="tag">实验</a>, <a class="p-category" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="实验四：文件管理"><a href="#实验四：文件管理" class="headerlink" title="实验四：文件管理"></a>实验四：文件管理</h1><h3 id="一、实验目的"><a href="#一、实验目的" class="headerlink" title="一、实验目的"></a>一、实验目的</h3><p>本次实验旨在通过实践了解文件管理原理与方法，重点加深对外存分配方式和文件空闲存储空间的理解。</p>
+<h3 id="二、实验内容"><a href="#二、实验内容" class="headerlink" title="二、实验内容"></a>二、实验内容</h3><ol>
+<li><p>了解使用计算机系统的文件系统的格式；</p>
+</li>
+<li><p>编程实现连续分配、链接分配、索引分配等三种外存分配方式；</p>
+</li>
+<li><p>编程实现空闲表法、位示图法连续分配、成组链接法等三种文件存储空间</p>
+</li>
+</ol>
+<p>管理方式</p>
+<h3 id="三、实验组织运行要求"><a href="#三、实验组织运行要求" class="headerlink" title="三、实验组织运行要求"></a>三、实验组织运行要求</h3><p>根据本实验的特点、要求和具体条件，宜采用“以学生自主训练为主的开放模式组织教学”。相关材料可以以书面资料（或电子版本）的形式分发给学生。学生自主练习、提问；教师针对性的辅导。本次实验内容很多，阈于课时限制，编程可能无法全部完成。对实验内容中 2）、3）（外存分配方式、文件存储空间管理方式）要求的 6 个编程要求，可以分成：<br>a) 连续分配与链接分配、<br>b) 索引分配、<br>c) 空闲表法与位示图法连续分配、<br>d) 成组链接法等四组<br>要求在实验课时内至少完成一组的编程。</p>
+<h3 id="四、思考题"><a href="#四、思考题" class="headerlink" title="四、思考题"></a>四、思考题</h3><ol>
+<li><p>实验使用的计算机系用中，术语文件夹与文件管理中的概念一致？</p>
+</li>
+<li><p>连续分配、链接分配、索引分配等三种外存分配方式的特点以及彼此之间的差异是什么？</p>
+</li>
+<li><p>空闲表法、位示图法连续分配、成组链接法三种文件存储空间管理方式的特点以及彼此之间的差异有哪些？</p>
+</li>
+</ol>
+<h2 id="a-连续分配与链接分配"><a href="#a-连续分配与链接分配" class="headerlink" title="a) 连续分配与链接分配"></a>a) 连续分配与链接分配</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unordered_map&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 磁盘块数量定义为常量</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> DISK_SIZE = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟磁盘：数组表示磁盘，每个元素代表一个磁盘块</span></span><br><span class="line"><span class="comment">// -1 表示空闲块，非负值表示被文件占用（存储文件ID或链表指针）</span></span><br><span class="line"><span class="type">int</span> disk[DISK_SIZE];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化磁盘块，将所有块标记为空闲</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">initializeDisk</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; DISK_SIZE; ++i) &#123;</span><br><span class="line">        disk[i] = <span class="number">-1</span>; <span class="comment">// 初始化时所有磁盘块未分配，设置为 -1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 显示当前磁盘状态</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">displayDisk</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Disk Status: [ &quot;</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; DISK_SIZE; ++i) &#123;</span><br><span class="line">        cout &lt;&lt; disk[i] &lt;&lt; <span class="string">&quot; &quot;</span>; <span class="comment">// 打印每个磁盘块的状态</span></span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;]&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连续分配实现</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">contiguousAllocation</span><span class="params">(<span class="type">int</span> fileID, <span class="type">int</span> fileSize)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> start = <span class="number">-1</span>; <span class="comment">// 起始位置初始化为 -1，表示未找到起始空闲块</span></span><br><span class="line">    <span class="type">int</span> count = <span class="number">0</span>;  <span class="comment">// 记录当前连续空闲块的数量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 遍历磁盘寻找足够大的连续空闲区域</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; DISK_SIZE; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (disk[i] == <span class="number">-1</span>) &#123; <span class="comment">// 如果当前块是空闲的</span></span><br><span class="line">            <span class="keyword">if</span> (start == <span class="number">-1</span>) start = i; <span class="comment">// 如果这是第一块空闲块，记录起始位置</span></span><br><span class="line">            count++; <span class="comment">// 计数连续空闲块</span></span><br><span class="line">            <span class="keyword">if</span> (count == fileSize) <span class="keyword">break</span>; <span class="comment">// 如果找到足够大小的区域，停止搜索</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 遇到非空闲块，重置起始位置和计数器</span></span><br><span class="line">            start = <span class="number">-1</span>;</span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果找到足够的空闲块，进行分配</span></span><br><span class="line">    <span class="keyword">if</span> (count == fileSize) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = start; i &lt; start + fileSize; ++i) &#123;</span><br><span class="line">            disk[i] = fileID; <span class="comment">// 将这些块分配给文件</span></span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;File &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 使用连续分配进行分配从 &quot;</span> &lt;&lt; start &lt;&lt; <span class="string">&quot; 到 &quot;</span> &lt;&lt; start + fileSize - <span class="number">1</span> &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// 分配成功</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果没有足够的连续空闲块，分配失败</span></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;文件的连续分配失败 &quot;</span> &lt;&lt; fileID &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 链接分配实现</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">linkedAllocation</span><span class="params">(<span class="type">int</span> fileID, <span class="type">int</span> fileSize)</span> </span>&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; allocatedBlocks; <span class="comment">// 用于存储分配的块号</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; DISK_SIZE &amp;&amp; allocatedBlocks.<span class="built_in">size</span>() &lt; fileSize; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (disk[i] == <span class="number">-1</span>) &#123; <span class="comment">// 如果当前块是空闲的</span></span><br><span class="line">            allocatedBlocks.<span class="built_in">push_back</span>(i); <span class="comment">// 将其加入分配的块号列表</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果找到足够的块，进行链接分配</span></span><br><span class="line">    <span class="keyword">if</span> (allocatedBlocks.<span class="built_in">size</span>() == fileSize) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; allocatedBlocks.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="comment">// 将块标记为分配，指向下一个块</span></span><br><span class="line">            disk[allocatedBlocks[i]] = (i &lt; allocatedBlocks.<span class="built_in">size</span>() - <span class="number">1</span>) ? allocatedBlocks[i + <span class="number">1</span>] : <span class="number">0</span>; <span class="comment">// 0 表示文件结束</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 打印分配结果</span></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;File &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 使用链式分配方式分配。块为: &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> block : allocatedBlocks) &#123;</span><br><span class="line">            cout &lt;&lt; block &lt;&lt; <span class="string">&quot; &quot;</span>; <span class="comment">// 打印分配的块号</span></span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// 分配成功</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果块不足，分配失败</span></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;文件链接分配失败 &quot;</span> &lt;&lt; fileID &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">initializeDisk</span>(); <span class="comment">// 初始化磁盘状态</span></span><br><span class="line">    <span class="built_in">displayDisk</span>();    <span class="comment">// 显示初始磁盘状态</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试连续分配</span></span><br><span class="line">    <span class="built_in">contiguousAllocation</span>(<span class="number">1</span>, <span class="number">10</span>); <span class="comment">// 为文件ID为1的文件分配10个连续块</span></span><br><span class="line">    <span class="built_in">displayDisk</span>(); <span class="comment">// 显示磁盘状态</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试链接分配</span></span><br><span class="line">    <span class="built_in">linkedAllocation</span>(<span class="number">2</span>, <span class="number">5</span>); <span class="comment">// 为文件ID为2的文件分配5个链接块</span></span><br><span class="line">    <span class="built_in">displayDisk</span>(); <span class="comment">// 显示磁盘状态</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 再次测试分配</span></span><br><span class="line">    <span class="built_in">contiguousAllocation</span>(<span class="number">3</span>, <span class="number">15</span>); <span class="comment">// 测试另一个连续分配</span></span><br><span class="line">    <span class="built_in">linkedAllocation</span>(<span class="number">4</span>, <span class="number">7</span>);      <span class="comment">// 测试另一个链接分配</span></span><br><span class="line">    <span class="built_in">displayDisk</span>(); <span class="comment">// 显示磁盘状态</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// 程序结束</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="b-索引分配"><a href="#b-索引分配" class="headerlink" title="b) 索引分配"></a>b) 索引分配</h2><p>索引分配是一种文件分配方式，在这种方式中，文件的每个块都有一个指针，指向该块在磁盘上的物理地址。一个索引块记录了文件所有数据块的地址。每个文件都有一个单独的索引块，它存储了文件所有数据块的指针。如果文件较大，索引块可能会分为多个层级（多级索引）。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unordered_map&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Disk</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; disk;         <span class="comment">// 磁盘块</span></span><br><span class="line">    unordered_map&lt;<span class="type">int</span>, vector&lt;<span class="type">int</span>&gt;&gt; indexTable;  <span class="comment">// 存储每个文件的索引块（文件ID -&gt; 数据块地址）</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">Disk</span>(<span class="type">int</span> size) &#123;</span><br><span class="line">        disk.<span class="built_in">resize</span>(size, <span class="number">-1</span>);  <span class="comment">// 初始化磁盘块（-1表示空闲）</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 索引分配方法</span></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">allocate</span><span class="params">(<span class="type">int</span> fileID, <span class="type">int</span> blocksNeeded)</span> </span>&#123;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; allocatedBlocks; <span class="comment">// 记录已分配的块</span></span><br><span class="line">        <span class="type">int</span> allocated = <span class="number">0</span>;  <span class="comment">// 已分配块数</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (disk[i] == <span class="number">-1</span> &amp;&amp; allocated &lt; blocksNeeded) &#123; <span class="comment">// 如果磁盘块空闲</span></span><br><span class="line">                disk[i] = fileID;  <span class="comment">// 分配磁盘块给文件</span></span><br><span class="line">                allocatedBlocks.<span class="built_in">push_back</span>(i); <span class="comment">// 记录已分配的块</span></span><br><span class="line">                allocated++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (allocated == blocksNeeded) &#123;</span><br><span class="line">            indexTable[fileID] = allocatedBlocks; <span class="comment">// 将分配的块存入索引表</span></span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 分配成功。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 分配失败，磁盘空间不足。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">displayDisk</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;磁盘块分配情况: &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            cout &lt;&lt; disk[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">displayIndexTable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;文件索引表: &quot;</span> &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; entry : indexTable) &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件ID: &quot;</span> &lt;&lt; entry.first &lt;&lt; <span class="string">&quot; -&gt; 块号: &quot;</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> block : entry.second) &#123;</span><br><span class="line">                cout &lt;&lt; block &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            cout &lt;&lt; endl;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Disk <span class="title">disk</span><span class="params">(<span class="number">10</span>)</span></span>;  <span class="comment">// 创建一个包含10个块的磁盘</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为文件1分配4个块</span></span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">1</span>, <span class="number">4</span>);</span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();   <span class="comment">// 输出磁盘块分配情况</span></span><br><span class="line">    disk.<span class="built_in">displayIndexTable</span>(); <span class="comment">// 输出文件的索引表</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为文件2分配3个块</span></span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();</span><br><span class="line">    disk.<span class="built_in">displayIndexTable</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="c-空闲表法与位示图法连续分配"><a href="#c-空闲表法与位示图法连续分配" class="headerlink" title="c) 空闲表法与位示图法连续分配"></a>c) 空闲表法与位示图法连续分配</h2><p>空闲链表：<br>在空闲表法中，我们使用一个表来表示磁盘块的分配状态。每个磁盘块的状态可以是“已分配”或“空闲”。如果某个块被分配了，它将在空闲表中被标记为已分配，否则标记为空闲。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Disk</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; disk;        <span class="comment">// 存储磁盘的各个块</span></span><br><span class="line">    vector&lt;<span class="type">bool</span>&gt; freeTable;  <span class="comment">// 空闲表，标记每个块是否空闲</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">Disk</span>(<span class="type">int</span> size) &#123;</span><br><span class="line">        disk.<span class="built_in">resize</span>(size, <span class="number">-1</span>); <span class="comment">// 初始化磁盘块（-1表示空闲）</span></span><br><span class="line">        freeTable.<span class="built_in">resize</span>(size, <span class="literal">true</span>); <span class="comment">// 初始化空闲表（true表示空闲）</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">allocate</span><span class="params">(<span class="type">int</span> fileID, <span class="type">int</span> blocksNeeded)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> allocated = <span class="number">0</span>;  <span class="comment">// 记录已分配的块数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (freeTable[i] &amp;&amp; allocated &lt; blocksNeeded) &#123;</span><br><span class="line">                disk[i] = fileID;      <span class="comment">// 将块分配给文件</span></span><br><span class="line">                freeTable[i] = <span class="literal">false</span>;  <span class="comment">// 更新空闲表，表示该块已分配</span></span><br><span class="line">                allocated++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (allocated == blocksNeeded) &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 分配成功。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 分配失败，磁盘空间不足。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">displayDisk</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;磁盘块分配情况: &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            cout &lt;&lt; disk[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Disk <span class="title">disk</span><span class="params">(<span class="number">10</span>)</span></span>;  <span class="comment">// 创建一个包含10个块的磁盘</span></span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">1</span>, <span class="number">3</span>); <span class="comment">// 为文件1分配3个块</span></span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();</span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">2</span>, <span class="number">5</span>); <span class="comment">// 为文件2分配5个块</span></span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>位视图法：<br>在位示图法中，我们使用一个位图来表示磁盘块的分配状态。每个磁盘块对应一个位，如果该块被分配，则对应的位为1，如果是空闲的，则对应的位为0。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Disk</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; disk;      <span class="comment">// 存储磁盘块</span></span><br><span class="line">    vector&lt;<span class="type">bool</span>&gt; bitMap;   <span class="comment">// 位示图，标记每个块的状态</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">Disk</span>(<span class="type">int</span> size) &#123;</span><br><span class="line">        disk.<span class="built_in">resize</span>(size, <span class="number">-1</span>);  <span class="comment">// 初始化磁盘块（-1表示空闲）</span></span><br><span class="line">        bitMap.<span class="built_in">resize</span>(size, <span class="literal">false</span>); <span class="comment">// 初始化位示图（false表示空闲）</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">allocate</span><span class="params">(<span class="type">int</span> fileID, <span class="type">int</span> blocksNeeded)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> allocated = <span class="number">0</span>;  <span class="comment">// 记录已分配的块数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!bitMap[i] &amp;&amp; allocated &lt; blocksNeeded) &#123; <span class="comment">// 块为空闲状态</span></span><br><span class="line">                disk[i] = fileID;      <span class="comment">// 将块分配给文件</span></span><br><span class="line">                bitMap[i] = <span class="literal">true</span>;      <span class="comment">// 更新位示图，标记该块已分配</span></span><br><span class="line">                allocated++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (allocated == blocksNeeded) &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 分配成功。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 分配失败，磁盘空间不足。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">displayDisk</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;磁盘块分配情况: &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            cout &lt;&lt; disk[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Disk <span class="title">disk</span><span class="params">(<span class="number">10</span>)</span></span>;  <span class="comment">// 创建一个包含10个块的磁盘</span></span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">1</span>, <span class="number">3</span>); <span class="comment">// 为文件1分配3个块</span></span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();</span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">2</span>, <span class="number">5</span>); <span class="comment">// 为文件2分配5个块</span></span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="d-成组链接法"><a href="#d-成组链接法" class="headerlink" title="d) 成组链接法"></a>d) 成组链接法</h2><p>成组链接法是一种文件分配方式，它将文件分割成大小相等的块，并将文件的块按顺序进行分配，每个块除了指向下一个块的指针外，还记录一个块的组号。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Disk</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; disk;      <span class="comment">// 存储磁盘块</span></span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; groupTable; <span class="comment">// 存储每个块所属的组</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">Disk</span>(<span class="type">int</span> size) &#123;</span><br><span class="line">        disk.<span class="built_in">resize</span>(size, <span class="number">-1</span>);  <span class="comment">// 初始化磁盘块（-1表示空闲）</span></span><br><span class="line">        groupTable.<span class="built_in">resize</span>(size, <span class="number">-1</span>);  <span class="comment">// 初始化每个块的组号</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">allocate</span><span class="params">(<span class="type">int</span> fileID, <span class="type">int</span> blocksNeeded, <span class="type">int</span> groupID)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> allocated = <span class="number">0</span>;  <span class="comment">// 记录已分配的块数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (disk[i] == <span class="number">-1</span> &amp;&amp; allocated &lt; blocksNeeded) &#123; <span class="comment">// 块为空闲</span></span><br><span class="line">                disk[i] = fileID;        <span class="comment">// 将块分配给文件</span></span><br><span class="line">                groupTable[i] = groupID; <span class="comment">// 设置该块的组号</span></span><br><span class="line">                allocated++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (allocated == blocksNeeded) &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 成功分配。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            cout &lt;&lt; <span class="string">&quot;文件 &quot;</span> &lt;&lt; fileID &lt;&lt; <span class="string">&quot; 分配失败，磁盘空间不足。&quot;</span> &lt;&lt; endl;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">displayDisk</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;磁盘块分配情况: &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; disk.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            cout &lt;&lt; disk[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;块的组号: &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; groupTable.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">            cout &lt;&lt; groupTable[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cout &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Disk <span class="title">disk</span><span class="params">(<span class="number">10</span>)</span></span>;  <span class="comment">// 创建一个包含10个块的磁盘</span></span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>); <span class="comment">// 为文件1分配3个块，组号为1</span></span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();</span><br><span class="line">    disk.<span class="built_in">allocate</span>(<span class="number">2</span>, <span class="number">5</span>, <span class="number">2</span>); <span class="comment">// 为文件2分配5个块，组号为2</span></span><br><span class="line">    disk.<span class="built_in">displayDisk</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><ol>
+<li>实验使用的计算机系用中，术语文件夹与文件管理中的概念一致？<br>在实验计算机系统中，“文件夹”和“文件”的概念通常保持一致性，和实际操作系统中的定义类似：</li>
+</ol>
+<ul>
+<li><strong>文件</strong>：表示存储在外存中的数据集合，由文件名和属性描述。每个文件都有逻辑结构和物理存储位置。</li>
+<li><strong>文件夹</strong>：用于组织文件和其他文件夹，是一种逻辑结构，方便用户查找和管理文件。</li>
+</ul>
+<ol start="2">
+<li>连续分配、链接分配、索引分配等三种外存分配方式的特点以及彼此之间的差异是什么？</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>连续分配</th>
+<th>链接分配</th>
+<th>索引分配</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>存储方式</strong></td>
+<td>文件存储在连续的物理块中</td>
+<td>文件存储在链表结构中，块通过指针连接</td>
+<td>一个索引块存储文件所有数据块的指针</td>
+</tr>
+<tr>
+<td><strong>优点</strong></td>
+<td>- 访问速度快（因为数据连续）</td>
+<td>- 无需连续块，空间利用率高</td>
+<td>- 支持直接访问，文件可分布在任何位置</td>
+</tr>
+<tr>
+<td></td>
+<td>- 适合顺序和随机访问</td>
+<td>- 动态分配灵活</td>
+<td>- 动态分配灵活</td>
+</tr>
+<tr>
+<td><strong>缺点</strong></td>
+<td>- 需要找到足够大的连续空间</td>
+<td>- 只适合顺序访问</td>
+<td>- 索引块可能占用较多空间</td>
+</tr>
+<tr>
+<td></td>
+<td>- 文件扩展可能需要移动或重分配</td>
+<td>- 额外的指针存储开销</td>
+<td>- 索引结构增加了复杂性</td>
+</tr>
+<tr>
+<td><strong>访问方式</strong></td>
+<td>支持顺序和随机访问</td>
+<td>仅支持顺序访问</td>
+<td>支持随机和顺序访问</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>小文件、对性能要求较高的场景</td>
+<td>空间碎片多、动态扩展需求大的场景</td>
+<td>大文件、需要频繁随机访问的场景</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>差异总结</strong>：<ul>
+<li>连续分配强调物理上连续，适合高效读写，但扩展性差。</li>
+<li>链接分配灵活，但只适合顺序访问。</li>
+<li>索引分配综合了两者的优点，支持随机访问，但索引块占用额外空间。</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>空闲表法、位示图法连续分配、成组链接法三种文件存储空间管理方式的特点以及彼此之间的差异有哪些？</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>空闲表法</th>
+<th>位示图法</th>
+<th>成组链接法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>实现方式</strong></td>
+<td>用表记录所有空闲块及其大小</td>
+<td>使用位图记录每个块的状态（0&#x3D;空闲，1&#x3D;占用）</td>
+<td>每组空闲块以链表连接，链表中记录若干空闲块</td>
+</tr>
+<tr>
+<td><strong>优点</strong></td>
+<td>- 适合大块连续空间分配</td>
+<td>- 查找简单，适合小文件</td>
+<td>- 查找大块空闲空间快，灵活性高</td>
+</tr>
+<tr>
+<td></td>
+<td>- 查找空闲空间较快</td>
+<td>- 管理简单，空间开销小</td>
+<td>- 空间利用率高，扩展性强</td>
+</tr>
+<tr>
+<td><strong>缺点</strong></td>
+<td>- 需要维护一张表，空间开销较大</td>
+<td>- 顺序查找可能较慢</td>
+<td>- 链表结构增加了复杂性</td>
+</tr>
+<tr>
+<td></td>
+<td>- 查找复杂度高于位示图</td>
+<td>- 不适合大块连续分配</td>
+<td>- 链表中可能有碎片</td>
+</tr>
+<tr>
+<td><strong>空间管理</strong></td>
+<td>记录空闲块的起始地址和大小</td>
+<td>每个位表示一个块的状态</td>
+<td>每组链接多个空闲块</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>适合连续存储和大文件</td>
+<td>适合分散的空间管理和小文件</td>
+<td>适合需要动态管理和混合大小文件的场景</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>差异总结</strong>：<ul>
+<li><strong>空闲表法</strong>适合管理连续大块空间，但需要维护额外的表。</li>
+<li><strong>位示图法</strong>简单高效，适合小块分散分配，但查找连续大块时性能较差。</li>
+<li><strong>成组链接法</strong>综合了两者优点，通过分组提高了查找效率，适合动态场景，但实现复杂。</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/totogo7">Projects</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://hammerhead-hippodraco-08a.notion.site/Impractical_Idealism-2688453a68724aefb598dd9a8beb8408">movie&amp;reading</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%9B%EF%BC%9A%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">实验四：文件管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="toc-number">1.0.1.</span> <span class="toc-text">一、实验目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="toc-number">1.0.2.</span> <span class="toc-text">二、实验内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E7%BB%84%E7%BB%87%E8%BF%90%E8%A1%8C%E8%A6%81%E6%B1%82"><span class="toc-number">1.0.3.</span> <span class="toc-text">三、实验组织运行要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.0.4.</span> <span class="toc-text">四、思考题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#a-%E8%BF%9E%E7%BB%AD%E5%88%86%E9%85%8D%E4%B8%8E%E9%93%BE%E6%8E%A5%E5%88%86%E9%85%8D"><span class="toc-number">1.1.</span> <span class="toc-text">a) 连续分配与链接分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#b-%E7%B4%A2%E5%BC%95%E5%88%86%E9%85%8D"><span class="toc-number">1.2.</span> <span class="toc-text">b) 索引分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#c-%E7%A9%BA%E9%97%B2%E8%A1%A8%E6%B3%95%E4%B8%8E%E4%BD%8D%E7%A4%BA%E5%9B%BE%E6%B3%95%E8%BF%9E%E7%BB%AD%E5%88%86%E9%85%8D"><span class="toc-number">1.3.</span> <span class="toc-text">c) 空闲表法与位示图法连续分配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#d-%E6%88%90%E7%BB%84%E9%93%BE%E6%8E%A5%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">d) 成组链接法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83%E9%A2%98"><span class="toc-number">1.5.</span> <span class="toc-text">思考题</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&text=操作系统实验四"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&is_video=false&description=操作系统实验四"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=操作系统实验四&body=Check out this article: https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&title=操作系统实验四"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&name=操作系统实验四&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://totogo7.github.io/2024/11/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C%E5%9B%9B/&t=操作系统实验四"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    allenig
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/totogo7">Projects</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://hammerhead-hippodraco-08a.notion.site/Impractical_Idealism-2688453a68724aefb598dd9a8beb8408">movie&amp;reading</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
